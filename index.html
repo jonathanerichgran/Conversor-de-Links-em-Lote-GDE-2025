@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de HTML ao Vivo</title>
+
+    <!-- Fonte Kaushan Script do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            display: flex;
+            width: 80%;
+            height: 80%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-panel, .right-panel {
+            width: 50%;
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .left-panel {
+            border-right: 2px solid #ddd;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .right-panel {
+            background-color: #ffffff;
+            padding-top: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Kaushan Script', cursive;
+            font-size: 2.5em;
+            color: #fff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 70%;
+            padding: 15px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: none;
+            background-color: #fafafa;
+            color: #333;
+        }
+
+        .output {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .import-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .import-button:hover {
+            background-color: #45a049;
+        }
+
+        .convert-button, .download-button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .convert-button:hover, .download-button:hover {
+            background-color: #1976D2;
+        }
+
+        .note-container {
+            background-color: #ffffe0;
+            padding: 15px;
+            color: #333;
+            font-size: 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+
+        footer a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 95%;
+                height: auto;
+            }
+
+            .left-panel, .right-panel {
+                width: 100%;
+                padding: 10px;
+            }
+
+            textarea {
+                height: 60%;
+            }
+
+            .output {
+                height: 40%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title">Conversor de Links em Lote GDE 2025</div>
+    <div class="container">
+        <div class="left-panel">
+            <!-- Notas -->
+            <div class="note-container">
+                <strong>Atenção:</strong><br>
+                1. Esse site serve para converter links longos do Word em "clique aqui" com hiperlink em lote e apenas aceita arquivos .html ou .htm, então salve o Word como HTML com codificação UTF-8 antes de importar.<br>
+                2. O site não deve ser utilizado em materiais com muitas imagens, pois elas podem não ser exibidas corretamente após a conversão.<br>
+                3. Algumas imagens podem deixar de ser exibidas com a conversão dos links, é importante revisar o material baixado posteriormente.<br>
+                4. Apenas use o site após ter revisado o material e faça backup de versões antigas.<br>
+                5. Salve o arquivo na mesma pasta em que você converteu o Word em HTML.
+            </div>
+            <h2>Insira o código HTML</h2>
+            <textarea id="htmlInput" placeholder="Cole seu código HTML aqui..."></textarea>
+            <div class="button-container">
+                <label for="fileInput" class="import-button">Importar Arquivo</label>
+                <input type="file" id="fileInput" accept=".html,.htm">
+            </div>
+        </div>
+        <div class="right-panel">
+            <h2>Resultado ao Vivo</h2>
+            <div id="output" class="output"></div>
+            <button class="convert-button" onclick="convertLinks()">Substituir Links</button>
+            <button class="download-button" onclick="downloadHTML()">Baixar HTML</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Site criado por <a href="mailto:jonathan.erich@gran.com">Jonathan Erich</a>. Para ajustes, entre em contato.</p>
+    </footer>
+
+    <script>
+        const htmlInput = document.getElementById('htmlInput');
+        const output = document.getElementById('output');
+        const fileInput = document.getElementById('fileInput');
+
+        // Função para importar e carregar o conteúdo de um arquivo HTML ou HTM
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && (file.type === 'text/html' || file.name.endsWith('.htm'))) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    htmlInput.value = e.target.result;
+                    updateOutput();
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Por favor, escolha um arquivo .html ou .htm.');
+            }
+        });
+
+        // Função para atualizar a div de saída em tempo real
+        htmlInput.addEventListener('input', updateOutput);
+
+        function updateOutput() {
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+
+            // Remove conteúdo anterior da div de saída
+            output.innerHTML = '';
+
+            // Adiciona o iframe e carrega o conteúdo dentro dele
+            output.appendChild(iframe);
+
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(htmlInput.value);  // Escreve o código HTML no iframe
+            doc.close();
+        }
+
+        // Função para substituir links no conteúdo exibido
+        function convertLinks() {
+            const iframeDoc = output.querySelector('iframe').contentDocument;
+            const regex = /(https?:\/\/[^\s<]+|www\.[^\s<]+)/g;
+
+            // Função que percorre todos os nós de texto
+            function replaceLinksWithClickHere(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const parent = node.parentNode;
+                    const text = node.textContent;
+                    const matches = text.match(regex);
+
+                    if (matches) {
+                        const fragment = document.createDocumentFragment();
+                        let lastIndex = 0;
+
+                        matches.forEach(match => {
+                            const index = text.indexOf(match, lastIndex);
+                            const before = text.substring(lastIndex, index);
+                            if (before) fragment.appendChild(document.createTextNode(before));
+
+                            let url = match;
+                            if (url.startsWith("www.")) {
+                                url = "http://" + url;
+                            }
+
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.textContent = "Clique aqui";
+                            link.target = "_blank";
+                            fragment.appendChild(link);
+
+                            lastIndex = index + match.length;
+                        });
+
+                        const after = text.substring(lastIndex);
+                        if (after) fragment.appendChild(document.createTextNode(after));
+
+                        parent.replaceChild(fragment, node);
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== "A" && node.nodeName !== "SCRIPT" && node.nodeName !== "STYLE") {
+                    Array.from(node.childNodes).forEach(replaceLinksWithClickHere);
+                }
+            }
+
+            replaceLinksWithClickHere(iframeDoc.body);
+        }
+
+        // Função para baixar o conteúdo exibido na área de visualização como um arquivo HTML
+        function downloadHTML() {
+            const iframeDoc = output.querySelector('iframe').contentDocument;
+            const htmlContent = iframeDoc.documentElement.outerHTML;
+
+            // Cria um arquivo Blob contendo o conteúdo HTML
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'conteudo.html';
+
+            // Aciona o download
+            link.click();
+        }
+    </script>
+</body>
+</html>
