@@ -243,21 +243,22 @@
         <div class="right-panel">
             <h2>Resultado ao Vivo</h2>
             <div id="output" class="output"></div>
-            <button class="convert-button" onclick="alterarTextos()"> Alterar textos (Tudo junto 1 e 2)</button>
+            <button class="convert-button" onclick="alterarTextos()"> Alterar textos (Tudo junto 1, 2 e 3)</button>
 
-            <div style="display: flex; gap: 10px;">
-            <button class="button-obsolete" onclick="convertLinks()">Substituir Links (Antigo 1)</button>
-            <button class="button-obsolete" onclick="replaceExistingLinkTexts()">Substituir Links que já são Links (Novo 2)</button>
-            </div>
+           <div style="display: flex; gap: 10px; justify-content: center;">
+  <button class="button-obsolete" style="flex: 1;" onclick="convertLinks()">Substituir Links que são texto puro (Parte 1)</button>
+  <button class="button-obsolete" style="flex: 1;" onclick="replaceExistingLinkTexts()">Substituir Links que já são hyperlinks (Parte 2)</button>
+</div>
 
 
-            <button class="convert-button" onclick="removeCliqueAqui()">Remover Clique Aqui (sem conteúdo) <br> (EM TESTES | arriscado)</button>
+
+            <button class="button-obsolete" onclick="removeCliqueAqui()">Remover Clique Aqui (sem link dentro) <br> (EM TESTES | arriscado) (Parte 3)</button>
             <button class="download-button" onclick="downloadHTML()">Baixar HTML</button>
         </div>
     </div>
 
     <footer>
-        <p style="color: white;">v0.4 Site criado por <a href="mailto:jonathan.erich@gran.com" style="text-decoration: underline; font-weight: bold;">Jonathan Erich</a>. Para ajustes, entre em contato.</p>
+        <p style="color: white;">v0.5 Site criado por <a href="mailto:jonathan.erich@gran.com" style="text-decoration: underline; font-weight: bold;">Jonathan Erich</a>. Para ajustes, entre em contato.</p>
     </footer>
 
     <script>
@@ -382,22 +383,26 @@
         }
         //update 0.4
 
-    function replaceExistingLinkTexts() {
+function replaceExistingLinkTexts() {
     const iframeDoc = output.querySelector('iframe').contentDocument;
     const regex = /(https?:\/\/[^\s<]+|www\.[^\s<]+)/g;
 
     const allLinks = iframeDoc.querySelectorAll("a");
 
     allLinks.forEach(link => {
-        const href = link.getAttribute("href") || "";
+        const href = link.getAttribute("href");
         const text = link.textContent.trim();
 
+        // Ignora se não tem href ou se está vazio (ex: <a name="..."></a>)
+        if (!href || href.trim() === "") return;
+
+        // Substitui se o texto for um link ou se o texto decodificado do href for igual ao texto visível
         if (regex.test(text) || decodeURIComponent(href) === text) {
-            // Substitui o texto do link por "Clique aqui" com <b> para negrito
             link.innerHTML = "<b>Clique aqui</b>";
         }
     });
 }
+
 
 
 removeCliqueAqui()
@@ -418,6 +423,7 @@ function removeCliqueAqui() {
 function alterarTextos(){
     convertLinks()
     replaceExistingLinkTexts()
+    removeCliqueAqui()
 }
 
 
